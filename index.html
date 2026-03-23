@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .calculator {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .calculator h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #555;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group input::placeholder {
+            color: #aaa;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .result-value {
+            color: #667eea;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .result-value.currency {
+            color: #764ba2;
+        }
+
+        .mode-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .toggle-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0 5px;
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .toggle-btn:hover:not(.active) {
+            border-color: #667eea;
+        }
+
+        .spreadsheet-section {
+            display: none;
+        }
+
+        .spreadsheet-section.active {
+            display: block;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        th, td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        .table-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .table-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .table-input.small {
+            width: 80px;
+        }
+
+        .table-input.large {
+            width: 100px;
+        }
+
+        .table-input.readonly {
+            background: #f8f9fa;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .table-actions {
+            text-align: center;
+        }
+
+        .action-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0 5px;
+        }
+
+        .add-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .add-btn:hover {
+            background: #218838;
+        }
+
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .remove-btn:hover {
+            background: #c82333;
+        }
+
+        .clear-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .clear-btn:hover {
+            background: #5a6268;
+        }
+
+        .totals-row {
+            background: #f0f3f5;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .totals-row td {
+            border-top: 2px solid #e0e0e0;
+            padding: 12px 8px;
+        }
+
+        .mode-container {
+            max-width: 1000px;
+        }
+
+        .mode-container .calculator {
+            max-width: 1000px;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .mode-container .calculator {
+                padding: 20px;
+            }
+
+            th, td {
+                padding: 10px 6px;
+                font-size: 13px;
+            }
+
+            .table-input {
+                padding: 6px 8px;
+                font-size: 13px;
+            }
+
+            .table-input.small {
+                width: 70px;
+            }
+
+            .table-input.large {
+                width: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Price Calculator</h1>
+        <form id="calculatorForm">
+            <div class="form-group">
+                <label for="cost">Cost ($)</label>
+                <input
+                    type="number"
+                    id="cost"
+                    name="cost"
+                    step="0.01"
+                    min="0"
+                    placeholder="Enter cost"
+                    required
+                >
+            </div>
+            <div class="form-group">
+                <label for="margin">Margin (%)</label>
+                <input
+                    type="number"
+                    id="margin"
+                    name="margin"
+                    step="0.01"
+                    min="0"
+                    placeholder="Enter margin (e.g., 20)"
+                    required
+                >
+            </div>
+            <button type="submit" class="calculate-btn">Calculate Price</button>
+        </form>
+        <div class="result" id="result">
+            <div class="result-label">Your Price</div>
+            <div class="result-value currency" id="price">$0.00</div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('calculatorForm');
+        const result = document.getElementById('result');
+        const priceElement = document.getElementById('price');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const cost = parseFloat(document.getElementById('cost').value);
+            const margin = parseFloat(document.getElementById('margin').value);
+
+            if (isNaN(cost) || isNaN(margin)) {
+                return;
+            }
+
+            const price = cost / (1 - (margin / 100));
+            priceElement.textContent = '$' + price.toFixed(2);
+            result.classList.add('show');
+        });
+
+        // Spreadsheet functionality
+        const spreadsheetSection = document.getElementById('spreadsheetSection');
+        const spreadsheetBody = document.getElementById('spreadsheetBody');
+        const addRowBtn = document.getElementById('addRowBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+        let rowCounter = 0;
+
+        // Initialize with one empty row
+        addRow();
+
+        // Toggle between single and spreadsheet mode
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const mode = this.dataset.mode;
+
+                toggleBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                if (mode === 'single') {
+                    spreadsheetSection.classList.remove('active');
+                } else {
+                    spreadsheetSection.classList.add('active');
+                }
+            });
+        });
+
+        // Add a new row
+        function addRow() {
+            rowCounter++;
+            const rowId = `row-${rowCounter}`;
+
+            const row = document.createElement('tr');
+            row.id = rowId;
+            row.innerHTML = `
+                <td>
+                    <input
+                        type="text"
+                        class="table-input"
+                        placeholder="Description"
+                        id="${rowId}-desc"
+                    >
+                </td>
+                <td>
+                    <input
+                        type="number"
+                        class="table-input large"
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01"
+                        id="${rowId}-listPrice"
+                        oninput="calculateRow('${rowId}')"
+                    >
+                </td>
+                <td>
+                    <input
+                        type="number"
+                        class="table-input large"
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01"
+                        id="${rowId}-cost"
+                        oninput="calculateRow('${rowId}')"
+                    >
+                </td>
+                <td>
+                    <input
+                        type="text"
+                        class="table-input readonly"
+                        value="0.00"
+                        readonly
+                        id="${rowId}-discount"
+                    >
+                </td>
+                <td>
+                    <input
+                        type="number"
+                        class="table-input small"
+                        placeholder="0"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        id="${rowId}-margin"
+                        oninput="calculateRow('${rowId}')"
+                    >
+                </td>
+                <td class="readonly-cell">
+                    <input
+                        type="text"
+                        class="table-input readonly"
+                        value="$0.00"
+                        readonly
+                        id="${rowId}-price"
+                    >
+                </td>
+                <td class="readonly-cell">
+                    <input
+                        type="text"
+                        class="table-input readonly"
+                        value="$0.00"
+                        readonly
+                        id="${rowId}-profit"
+                    >
+                </td>
+                <td class="table-actions">
+                    <button class="action-btn remove-btn" onclick="removeRow('${rowId}')" title="Remove Row">✕</button>
+                </td>
+            `;
+
+            spreadsheetBody.appendChild(row);
+            updateTotals();
+        }
+
+        // Remove a row
+        function removeRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (row && spreadsheetBody.children.length > 1) {
+                row.remove();
+                updateTotals();
+            }
+        }
+
+        // Calculate a specific row
+        function calculateRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (!row) return;
+
+            const listPrice = parseFloat(document.getElementById(`${rowId}-listPrice`).value) || 0;
+            const cost = parseFloat(document.getElementById(`${rowId}-cost`).value) || 0;
+            const margin = parseFloat(document.getElementById(`${rowId}-margin`).value) || 0;
+
+            // Calculate discount percentage
+            const discountPercent = listPrice > 0 ? (1 - cost / listPrice) * 100 : 0;
+
+            // Calculate price using margin formula
+            let price = 0;
+            if (margin < 100) {
+                price = cost / (1 - (margin / 100));
+            }
+
+            // Calculate discount amount
+            const discountAmount = listPrice * (discountPercent / 100);
+
+            // Calculate profit
+            const profit = price - cost;
+
+            // Update discount percentage field (readonly)
+            document.getElementById(`${rowId}-discount`).value = discountPercent.toFixed(2);
+
+            // Update price and profit displays
+            document.getElementById(`${rowId}-price`).value = price > 0 ? '$' + price.toFixed(2) : '$0.00';
+            document.getElementById(`${rowId}-profit`).value = profit > 0 ? '$' + profit.toFixed(2) : '$0.00';
+        }
+
+        // Update all row calculations
+        function calculateAll() {
+            const rows = spreadsheetBody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const rowId = row.id;
+                calculateRow(rowId);
+            });
+        }
+
+        // Calculate totals for all columns
+        function updateTotals() {
+            let totalListPrice = 0;
+            let totalCost = 0;
+            let totalDiscount = 0;
+            let totalPrice = 0;
+            let totalProfit = 0;
+
+            const rows = spreadsheetBody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const rowId = row.id;
+                const listPrice = parseFloat(document.getElementById(`${rowId}-listPrice`).value) || 0;
+                const cost = parseFloat(document.getElementById(`${rowId}-cost`).value) || 0;
+                const discount = parseFloat(document.getElementById(`${rowId}-discount`).value) || 0;
+                const price = parseFloat(document.getElementById(`${rowId}-price`).value.replace('$', '')) || 0;
+                const profit = parseFloat(document.getElementById(`${rowId}-profit`).value.replace('$', '')) || 0;
+
+                totalListPrice += listPrice;
+                totalCost += cost;
+                totalDiscount += discount;
+                totalPrice += price;
+                totalProfit += profit;
+            });
+
+            document.getElementById('totalListPrice').textContent = totalListPrice > 0 ? '$' + totalListPrice.toFixed(2) : '-';
+            document.getElementById('totalCost').textContent = totalCost > 0 ? '$' + totalCost.toFixed(2) : '-';
+            document.getElementById('totalDiscount').textContent = totalDiscount > 0 ? totalDiscount.toFixed(2) + '%' : '-';
+            document.getElementById('totalPrice').textContent = totalPrice > 0 ? '$' + totalPrice.toFixed(2) : '-';
+            document.getElementById('totalProfit').textContent = totalProfit > 0 ? '$' + totalProfit.toFixed(2) : '-';
+        }
+
+        // Add row button handler
+        addRowBtn.addEventListener('click', addRow);
+
+        // Clear all button handler
+        clearAllBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to clear all rows?')) {
+                spreadsheetBody.innerHTML = '';
+                rowCounter = 0;
+                addRow();
+            }
+        });
+
+        // Add a function to make calculateRow globally accessible
+        window.calculateRow = calculateRow;
+        window.removeRow = removeRow;
+    </script>
+</body>
+</html>
