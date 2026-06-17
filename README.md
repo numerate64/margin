@@ -1,62 +1,28 @@
-# Price Calculator
+# Margin Calculator
 
-A simple, responsive web application for calculating product prices and managing inventory costs with margin calculations.
+A single-file static calculator for working with cost, price, margin, and line-item totals.
 
-## Features
+## Published Page
 
-### Single Entry Mode
-- Calculate selling price based on cost and desired margin percentage
-- Simple, intuitive interface with real-time price display
-- Ideal for quick price calculations
-
-### Spreadsheet Mode
-- Manage multiple items with detailed price calculations
-- Track item name, list price, cost, discount percentage, and margin
-- Automatic calculation of:
-  - Discount amount
-  - Selling price based on margin
-  - Profit margin
-- Add or remove rows as needed
-- Total summary across all items
-
-## How to Use
-
-1. **Single Entry Mode**:
-   - Enter the cost of your item
-   - Specify your desired margin percentage
-   - Click "Calculate Price" to see the result
-
-2. **Spreadsheet Mode**:
-   - Click "Spreadsheet" tab to switch modes
-   - Add rows for each item you want to track
-   - Enter item description, list price, cost, and margin
-   - The discount percentage field is optional for discount calculations
-   - Row calculations update automatically as you type
-   - View totals at the bottom of the table
-
-## Formula
-
-The price calculation uses the following formula:
-
-```
-Price = Cost / (1 - Margin% / 100)
+```text
+https://numerate64.github.io/margin/
 ```
 
-## Technology
+## File
 
-- Single HTML file with embedded CSS and JavaScript
-- No external dependencies
-- Responsive design that works on desktop and mobile
-- Modern gradient UI with smooth animations
+- `index.html` - contains the HTML, CSS, and JavaScript for the calculator.
 
-## Files
+## What It Does
 
-- `index.html` - Main application file (contains HTML, CSS, and JavaScript)
+The page has two calculator modes:
 
-## Browser Compatibility
+- A simple calculator for deriving price or margin from cost and percentage inputs.
+- A spreadsheet-style section for multiple rows, calculated totals, and line-item review.
 
-Works in all modern browsers that support HTML5, CSS3, and ES6 JavaScript.
+## Local Preview
 
-## License
+Open `index.html` directly in a browser. No build step or server is required.
 
-This is a simple utility tool for price calculations.
+## Notes
+
+All calculations happen in the browser. The page does not send values anywhere and does not require external services.
