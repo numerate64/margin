@@ -1,6 +1,6 @@
-# Margin Calculator
+# Price Calculator
 
-A single-file static calculator for working with cost, price, margin, and line-item totals.
+A single-file static calculator for turning a cost and target margin percentage into a selling price.
 
 ## Published Page
 
@@ -14,10 +14,18 @@ https://numerate64.github.io/margin/
 
 ## What It Does
 
-The page has two calculator modes:
+The visible page has one calculator:
 
-- A simple calculator for deriving price or margin from cost and percentage inputs.
-- A spreadsheet-style section for multiple rows, calculated totals, and line-item review.
+- Enter a cost.
+- Enter a target margin percentage.
+- Click **Calculate Price**.
+- The browser displays the required selling price.
+
+The calculation used by the page is:
+
+```text
+price = cost / (1 - margin / 100)
+```
 
 ## Local Preview
 
@@ -26,3 +34,5 @@ Open `index.html` directly in a browser. No build step or server is required.
 ## Notes
 
 All calculations happen in the browser. The page does not send values anywhere and does not require external services.
+
+The source file contains some unused table/spreadsheet CSS and JavaScript, but the checked-in HTML does not expose a spreadsheet view.
