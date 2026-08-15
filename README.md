@@ -1,6 +1,6 @@
 # Price Calculator
 
-A single-file static calculator for turning a cost and target margin percentage into a selling price.
+A single-file static calculator for turning a cost plus either a target margin or markup percentage into a selling price.
 
 ## Published Page
 
@@ -16,16 +16,25 @@ https://numerate64.github.io/margin/
 
 The visible page has one calculator:
 
+- Choose **Margin** or **Markup**.
 - Enter a cost.
-- Enter a target margin percentage.
+- Enter the target percentage.
 - Click **Calculate Price**.
 - The browser displays the required selling price.
 
-The calculation used by the page is:
+For margin calculations, the page uses:
 
 ```text
 price = cost / (1 - margin / 100)
 ```
+
+For markup calculations, the page uses:
+
+```text
+price = cost * (1 + markup / 100)
+```
+
+Margin must be less than 100%. Markup can be 100% or higher.
 
 ## Local Preview
 
@@ -34,5 +43,3 @@ Open `index.html` directly in a browser. No build step or server is required.
 ## Notes
 
 All calculations happen in the browser. The page does not send values anywhere and does not require external services.
-
-The source file contains some unused table/spreadsheet CSS and JavaScript, but the checked-in HTML does not expose a spreadsheet view.
