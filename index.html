@@ -4,7 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Price Calculator</title>
+    <script>
+        const savedTheme = localStorage.getItem('priceCalculatorTheme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        document.documentElement.dataset.theme = savedTheme || (prefersDark ? 'dark' : 'light');
+    </script>
     <style>
+        :root {
+            --page-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --panel-bg: #ffffff;
+            --panel-shadow: rgba(0, 0, 0, 0.3);
+            --text-primary: #333333;
+            --text-secondary: #555555;
+            --text-muted: #666666;
+            --input-bg: #ffffff;
+            --input-border: #e0e0e0;
+            --placeholder: #aaaaaa;
+            --toggle-bg: #f1f3f5;
+            --toggle-active-bg: #ffffff;
+            --result-bg: #f8f9fa;
+            --accent: #667eea;
+            --accent-strong: #764ba2;
+            --danger: #dc3545;
+            --link-bg: #f8f9fa;
+            --link-border: #e0e0e0;
+        }
+
+        :root[data-theme="dark"] {
+            --page-bg: linear-gradient(135deg, #171923 0%, #2d2438 100%);
+            --panel-bg: #1f2430;
+            --panel-shadow: rgba(0, 0, 0, 0.55);
+            --text-primary: #f3f4f6;
+            --text-secondary: #d6dae3;
+            --text-muted: #aeb5c2;
+            --input-bg: #151923;
+            --input-border: #3a4354;
+            --placeholder: #7e8798;
+            --toggle-bg: #151923;
+            --toggle-active-bg: #2c3342;
+            --result-bg: #151923;
+            --accent: #9da8ff;
+            --accent-strong: #c5a9ff;
+            --danger: #ff7b86;
+            --link-bg: #151923;
+            --link-border: #3a4354;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,26 +59,106 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--page-bg);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            color: var(--text-primary);
         }
 
         .calculator {
-            background: white;
+            background: var(--panel-bg);
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px var(--panel-shadow);
             padding: 40px;
             max-width: 400px;
             width: 100%;
         }
 
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .repo-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 0 12px;
+            border: 1px solid var(--link-border);
+            border-radius: 8px;
+            background: var(--link-bg);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .repo-link:hover,
+        .repo-link:focus-visible {
+            border-color: var(--accent);
+            color: var(--accent);
+            outline: none;
+        }
+
+        .theme-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .theme-control input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .theme-switch {
+            position: relative;
+            width: 46px;
+            height: 26px;
+            border-radius: 999px;
+            background: var(--toggle-bg);
+            border: 1px solid var(--input-border);
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .theme-switch::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            transition: transform 0.2s;
+        }
+
+        .theme-control input:checked + .theme-switch::after {
+            transform: translateX(20px);
+        }
+
+        .theme-control input:focus-visible + .theme-switch {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
         .calculator h1 {
             text-align: center;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 30px;
             font-size: 24px;
         }
@@ -43,7 +169,7 @@
 
         .form-group label {
             display: block;
-            color: #555;
+            color: var(--text-secondary);
             font-weight: 500;
             margin-bottom: 8px;
             font-size: 14px;
@@ -52,19 +178,21 @@
         .form-group input {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--input-border);
             border-radius: 10px;
+            background: var(--input-bg);
+            color: var(--text-primary);
             font-size: 16px;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, background 0.3s, color 0.3s;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--accent);
         }
 
         .form-group input::placeholder {
-            color: #aaa;
+            color: var(--placeholder);
         }
 
         .calculation-toggle {
@@ -73,7 +201,7 @@
             gap: 8px;
             margin-bottom: 20px;
             padding: 4px;
-            background: #f1f3f5;
+            background: var(--toggle-bg);
             border-radius: 10px;
         }
 
@@ -86,7 +214,7 @@
         .calculation-toggle label {
             padding: 10px 12px;
             border-radius: 8px;
-            color: #555;
+            color: var(--text-secondary);
             font-size: 14px;
             font-weight: 600;
             text-align: center;
@@ -95,13 +223,13 @@
         }
 
         .calculation-toggle input:checked + label {
-            background: white;
-            color: #667eea;
+            background: var(--toggle-active-bg);
+            color: var(--accent);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
         }
 
         .calculation-toggle input:focus-visible + label {
-            outline: 2px solid #667eea;
+            outline: 2px solid var(--accent);
             outline-offset: 2px;
         }
 
@@ -130,7 +258,7 @@
         .result {
             margin-top: 25px;
             padding: 20px;
-            background: #f8f9fa;
+            background: var(--result-bg);
             border-radius: 10px;
             text-align: center;
             display: none;
@@ -141,29 +269,29 @@
         }
 
         .result-label {
-            color: #666;
+            color: var(--text-muted);
             font-size: 14px;
             margin-bottom: 5px;
         }
 
         .result-value {
-            color: #667eea;
+            color: var(--accent);
             font-size: 32px;
             font-weight: 700;
         }
 
         .result-value.currency {
-            color: #764ba2;
+            color: var(--accent-strong);
         }
 
         .result-detail {
-            color: #666;
+            color: var(--text-muted);
             font-size: 13px;
             margin-top: 8px;
         }
 
         .error-message {
-            color: #dc3545;
+            color: var(--danger);
             font-size: 14px;
             margin-top: 12px;
             text-align: center;
@@ -357,6 +485,14 @@
 </head>
 <body>
     <div class="calculator">
+        <div class="top-bar">
+            <a class="repo-link" href="https://github.com/numerate64/margin" target="_blank" rel="noopener noreferrer">GitHub Repo</a>
+            <label class="theme-control" for="themeToggle">
+                <input type="checkbox" id="themeToggle" aria-label="Toggle dark mode">
+                <span class="theme-switch" aria-hidden="true"></span>
+                <span id="themeLabel">Dark</span>
+            </label>
+        </div>
         <h1>Price Calculator</h1>
         <form id="calculatorForm">
             <div class="calculation-toggle" role="radiogroup" aria-label="Calculation type">
@@ -408,6 +544,21 @@
         const percentageInput = document.getElementById('percentage');
         const percentageLabel = document.getElementById('percentageLabel');
         const calculationTypeInputs = document.querySelectorAll('input[name="calculationType"]');
+        const themeToggle = document.getElementById('themeToggle');
+        const themeLabel = document.getElementById('themeLabel');
+
+        function setTheme(theme) {
+            document.documentElement.dataset.theme = theme;
+            localStorage.setItem('priceCalculatorTheme', theme);
+            themeToggle.checked = theme === 'dark';
+            themeLabel.textContent = theme === 'dark' ? 'Light' : 'Dark';
+        }
+
+        setTheme(document.documentElement.dataset.theme);
+
+        themeToggle.addEventListener('change', function() {
+            setTheme(this.checked ? 'dark' : 'light');
+        });
 
         function getCalculationType() {
             return document.querySelector('input[name="calculationType"]:checked').value;

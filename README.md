@@ -16,6 +16,8 @@ https://numerate64.github.io/margin/
 
 The visible page has one calculator:
 
+- Open the source repository from the **GitHub Repo** link.
+- Toggle between light and dark mode.
 - Choose **Margin** or **Markup**.
 - Enter a cost.
 - Enter the target percentage.
